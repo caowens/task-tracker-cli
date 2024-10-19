@@ -6,7 +6,8 @@ namespace TaskTracker
   {
     static void Main(string[] args)
     {
-        TaskService.Start();
+        TaskService service = new TaskService();
+        service.Start();
     }
   }
 }
