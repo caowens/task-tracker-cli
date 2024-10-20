@@ -67,10 +67,18 @@ namespace TaskTracker.Service
         {
             if (todos.Exists(x => x.Id == id)) 
             {
-                Todo todo = todos.Find(task => task.Id == id);
-                todo.Description = description;
-                Console.WriteLine("Task updated successfully.");
+                Todo? todo = todos.Find(task => task.Id == id);
+                if (todo != null)
+                {
+                    todo.Description = description;
+                    todo.UpdatedAt = DateTime.Now;
 
+                    // Add task to json file
+                    string jsonString = JsonSerializer.Serialize(todos);
+                    File.WriteAllText(filePath, jsonString);
+                    
+                    Console.WriteLine("Task updated successfully.");
+                }
             }
             else
             {
