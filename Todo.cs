@@ -4,11 +4,11 @@ namespace TaskTracker.Models
 {
     class Todo
     {
-        public Guid id;
-        public string description;
-        public string status;
-        public DateTime createdAt;
-        public DateTime updatedAt;
+        public Guid id { get; set; } 
+        public string description { get; set; }
+        public string status { get; set; }
+        public DateTime createdAt { get; set; }
+        public DateTime updatedAt { get; set; }
 
         public Todo(Guid Id, string Description)
         {

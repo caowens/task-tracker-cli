@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Text.RegularExpressions;
+using System.Text.Json;
 using Pastel;
 using TaskTracker.Models;
 
@@ -9,6 +10,24 @@ namespace TaskTracker.Service
     class TaskService
     {
         private List<Todo> todos = new List<Todo>();
+        private string filePath = @"tasks.json";
+
+        public TaskService()
+        {
+            LoadTodosFromFile();
+        }
+
+        private void LoadTodosFromFile()
+        {
+            if (File.Exists(filePath))
+            {
+                string jsonString = File.ReadAllText(filePath);
+                if (!string.IsNullOrEmpty(jsonString))
+                {
+                    todos = JsonSerializer.Deserialize<List<Todo>>(jsonString) ?? new List<Todo>();
+                }
+            }
+        }
 
         // Helper method to standardize command output
         public static void DisplayCommand(string command, string args, string description)
@@ -18,7 +37,7 @@ namespace TaskTracker.Service
             int argWidth = 30;
 
             // Print the command and arguments separately with their own colors and fixed width alignment
-            Console.WriteLine($"\t{((command.Pastel(Color.DarkViolet)).PadRight(argWidth) + " " + args.Pastel(Color.Green)).PadRight(totalWidth)} {description}");
+            Console.WriteLine($"\t{(command.Pastel(Color.DarkViolet).PadRight(argWidth) + " " + args.Pastel(Color.Green)).PadRight(totalWidth)} {description}");
         }
 
         public void DisplayTodos()
@@ -35,6 +54,11 @@ namespace TaskTracker.Service
         public void AddTodo(Todo todo)
         {
             todos.Add(todo);
+
+            // Add task to json file
+            string jsonString = JsonSerializer.Serialize(todos);
+            File.WriteAllText(filePath, jsonString);
+
             Console.WriteLine("Task added successfully.");
         }
 
