@@ -133,6 +133,7 @@ namespace TaskTracker.Service
                     case "help":
                         Console.WriteLine("Here are all the available commands:");
 
+                        DisplayCommand("list", "", "Displays all of the current tasks");
                         DisplayCommand("add", "[task]", "Adds a new task to the task list.");
                         DisplayCommand("help", "", "Shows available commands.");
                         DisplayCommand("exit", "", "Exits the CLI application.");
