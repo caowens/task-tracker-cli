@@ -42,8 +42,8 @@ namespace TaskTracker.Service
 
         public void DisplayTodos()
         {
-            Console.WriteLine(" ID\t\tDescription\t\tStatus\t\tCreated\t\tLast Updated");
-            Console.WriteLine("----\t\t----\t\t----\t\t----\t\t----\t\t");
+            Console.WriteLine(" ID\t\t\t\t\t\tDescription\t\tStatus\t\tCreated\t\t\t\tLast Updated");
+            Console.WriteLine("----\t\t\t\t\t\t----\t\t\t----\t\t----\t\t\t\t----\t\t");
 
             foreach (Todo todo in todos)
             {
@@ -126,6 +126,9 @@ namespace TaskTracker.Service
                         Console.WriteLine("\nHere is your updated list of tasks:\n");
                         DisplayTodos();
 
+                        break;
+                    case "list": // List all tasks
+                        DisplayTodos();
                         break;
                     case "help":
                         Console.WriteLine("Here are all the available commands:");
