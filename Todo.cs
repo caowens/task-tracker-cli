@@ -21,7 +21,7 @@ namespace TaskTracker.Models
 
         public override string ToString()
         {
-            return $"{Id}\t\t{Description}\t\t{Status}\t\t{CreatedAt}\t\t{UpdatedAt}\t\t";
+            return $"{Id}\t\t{Description}\t\t\t{Status}\t\t{CreatedAt}\t\t{UpdatedAt}\t\t";
         }
     }
 }

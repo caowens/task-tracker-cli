@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Text.Json;
 using Pastel;
 using TaskTracker.Models;
+using TaskTracker.Utilities;
 
 namespace TaskTracker.Service
 {
@@ -42,8 +43,8 @@ namespace TaskTracker.Service
 
         public void DisplayTodos()
         {
-            Console.WriteLine(" ID\t\t\t\t\t\tDescription\t\tStatus\t\tCreated\t\t\t\tLast Updated");
-            Console.WriteLine("----\t\t\t\t\t\t----\t\t\t----\t\t----\t\t\t\t----\t\t");
+            Console.WriteLine(" ID\t\t\t\t\t\tDescription\t\t\tStatus\t\tCreated\t\t\t\tLast Updated");
+            Console.WriteLine("----\t\t\t\t\t\t----\t\t\t\t----\t\t----\t\t\t\t----\t\t");
 
             foreach (Todo todo in todos)
             {
@@ -60,6 +61,21 @@ namespace TaskTracker.Service
             File.WriteAllText(filePath, jsonString);
 
             Console.WriteLine("Task added successfully.");
+        }
+
+        public void UpdateTodo(Guid id, string description)
+        {
+            if (todos.Exists(x => x.Id == id)) 
+            {
+                Todo todo = todos.Find(task => task.Id == id);
+                todo.Description = description;
+                Console.WriteLine("Task updated successfully.");
+
+            }
+            else
+            {
+                Console.WriteLine("There are no tasks that match that Id.");
+            }
         }
 
         public void Start()
@@ -113,7 +129,7 @@ namespace TaskTracker.Service
                     case "add":
                         if (inputArgs.Length < 2) 
                         {
-                            Console.WriteLine("Wrong number of arguments. Please provide at least one argument to the add command.");
+                            Console.WriteLine("Wrong number of arguments. Please provide at least one argument to the add command. You can use 'help' for more information.");
                             break;
                         }
 
@@ -127,14 +143,34 @@ namespace TaskTracker.Service
                         DisplayTodos();
 
                         break;
+                    case "update":
+                        if (inputArgs.Length != 3)
+                        {
+                            Console.WriteLine("Incorrect amount of arguments. Please provide both an Id and a description. You can use 'help' for more information.");
+                        }
+                        else 
+                        {
+                            bool isId = TaskTrackerExtensions.TryParseGuid(inputArgs[1], out Guid id);
+                            if (isId)
+                            {
+                                UpdateTodo(id, inputArgs[2]);
+                                Console.WriteLine("Task updated successfully.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("That is not a valid id. You can use the 'list' command to see the ID for the task you want to update.");
+                            }
+                        }
+                        break;
                     case "list": // List all tasks
                         DisplayTodos();
                         break;
                     case "help":
                         Console.WriteLine("Here are all the available commands:");
 
-                        DisplayCommand("list", "", "Displays all of the current tasks");
                         DisplayCommand("add", "[task]", "Adds a new task to the task list.");
+                        DisplayCommand("update", "[id] [task]", "Updates a task with the specified id.");
+                        DisplayCommand("list", "", "Displays all of the current tasks");
                         DisplayCommand("help", "", "Shows available commands.");
                         DisplayCommand("exit", "", "Exits the CLI application.");
 
