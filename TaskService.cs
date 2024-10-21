@@ -95,8 +95,31 @@ namespace TaskTracker.Service
                 // Overwrite json file with new list
                 string jsonString = JsonSerializer.Serialize(todos);
                 File.WriteAllText(filePath, jsonString);
-                
+
                 Console.WriteLine("Task deleted successfully.");
+            }
+            else
+            {
+                Console.WriteLine("There are no tasks that match that Id.");
+            }
+        }
+
+        public void ChangeStatus(Guid id, string status)
+        {
+            if (todos.Exists(x => x.Id == id)) 
+            {
+                Todo? todo = todos.Find(task => task.Id == id);
+                if (todo != null)
+                {
+                    todo.Status = status;
+                    todo.UpdatedAt = DateTime.Now;
+
+                    // Add task to json file
+                    string jsonString = JsonSerializer.Serialize(todos);
+                    File.WriteAllText(filePath, jsonString);
+
+                    Console.WriteLine("Task updated successfully.");
+                }
             }
             else
             {
@@ -205,6 +228,29 @@ namespace TaskTracker.Service
                             }
                         }
                         break;
+                    case "mark-in-progress":
+                    case "mark-done":
+                        if (inputArgs.Length != 2)
+                        {
+                            Console.WriteLine("Invalid number of arguments. Please provide only one ID. You can use 'help' for more information.");
+                        }
+                        else 
+                        {
+                            bool isId = TaskTrackerExtensions.TryParseGuid(inputArgs[1], out Guid id);
+                            if (isId && inputArgs[0] == "mark-in-progress")
+                            {
+                                ChangeStatus(id, "In Progress");
+                            }
+                            else if (isId && inputArgs[0] == "mark-done")
+                            {
+                                ChangeStatus(id, "Done");
+                            }
+                            else
+                            {
+                                Console.WriteLine("That is not a valid id and/or command. You can use the 'list' command to see the ID for the task you want to delete.");
+                            }
+                        }
+                        break;
                     case "list": // List all tasks
                         DisplayTodos();
                         break;
@@ -214,6 +260,8 @@ namespace TaskTracker.Service
                         DisplayCommand("add", "[task]", "Adds a new task to the task list.");
                         DisplayCommand("update", "[id] [task]", "Updates a task with the specified id and description.");
                         DisplayCommand("delete", "[id]", "Deletes a task with the specified id.");
+                        DisplayCommand("mark-in-progress", "[id]", "Updates status of specified id to 'In progress'.");
+                        DisplayCommand("mark-done", "[id]", "Updates status of specified id to 'Done'.");
                         DisplayCommand("list", "", "Displays all of the current tasks");
                         DisplayCommand("help", "", "Shows available commands.");
                         DisplayCommand("exit", "", "Exits the CLI application.");
