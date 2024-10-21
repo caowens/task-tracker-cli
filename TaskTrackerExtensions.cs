@@ -3,7 +3,7 @@ namespace TaskTracker.Utilities
     class TaskTrackerExtensions
     {
         /// <summary>
-        /// Tries to see parse a string into a Guid.
+        /// Tries to parse a string into a Guid.
         /// </summary>
         /// <param name="guidString">The <see cref="string"/> you are trying to parse.</param>
         /// <param name="parsedGuid">The <see cref="Guid"/> version of the given string.</param>/// 
