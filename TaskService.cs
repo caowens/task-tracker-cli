@@ -76,9 +76,27 @@ namespace TaskTracker.Service
                     // Add task to json file
                     string jsonString = JsonSerializer.Serialize(todos);
                     File.WriteAllText(filePath, jsonString);
-                    
+
                     Console.WriteLine("Task updated successfully.");
                 }
+            }
+            else
+            {
+                Console.WriteLine("There are no tasks that match that Id.");
+            }
+        }
+
+        public void DeleteTodo(Guid id)
+        {
+            if (todos.Exists(x => x.Id == id)) 
+            {
+                todos.RemoveAll(x => x.Id == id);
+
+                // Overwrite json file with new list
+                string jsonString = JsonSerializer.Serialize(todos);
+                File.WriteAllText(filePath, jsonString);
+                
+                Console.WriteLine("Task deleted successfully.");
             }
             else
             {
@@ -162,11 +180,28 @@ namespace TaskTracker.Service
                             if (isId)
                             {
                                 UpdateTodo(id, inputArgs[2]);
-                                Console.WriteLine("Task updated successfully.");
                             }
                             else
                             {
                                 Console.WriteLine("That is not a valid id. You can use the 'list' command to see the ID for the task you want to update.");
+                            }
+                        }
+                        break;
+                    case "delete":
+                        if (inputArgs.Length != 2)
+                        {
+                            Console.WriteLine("Invalid number of arguments. Please provide only one ID. You can use 'help' for more information.");
+                        }
+                        else 
+                        {
+                            bool isId = TaskTrackerExtensions.TryParseGuid(inputArgs[1], out Guid id);
+                            if (isId)
+                            {
+                                DeleteTodo(id);
+                            }
+                            else
+                            {
+                                Console.WriteLine("That is not a valid id. You can use the 'list' command to see the ID for the task you want to delete.");
                             }
                         }
                         break;
@@ -177,7 +212,8 @@ namespace TaskTracker.Service
                         Console.WriteLine("Here are all the available commands:");
 
                         DisplayCommand("add", "[task]", "Adds a new task to the task list.");
-                        DisplayCommand("update", "[id] [task]", "Updates a task with the specified id.");
+                        DisplayCommand("update", "[id] [task]", "Updates a task with the specified id and description.");
+                        DisplayCommand("delete", "[id]", "Deletes a task with the specified id.");
                         DisplayCommand("list", "", "Displays all of the current tasks");
                         DisplayCommand("help", "", "Shows available commands.");
                         DisplayCommand("exit", "", "Exits the CLI application.");
