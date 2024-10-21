@@ -52,6 +52,43 @@ namespace TaskTracker.Service
             }
         }
 
+        public void DisplayTodos(string command)
+        {
+            List<Todo> filteredTodosByCommand = new List<Todo>();
+
+            if (command == "todo" || command == "done") 
+            {
+                filteredTodosByCommand = todos.Where(todo => todo.Status == command).ToList();
+                
+                // orderedTodosByCommand = (List<Todo>)todos.OrderBy(x => x.Status == "todo");
+            }
+            else if (command == "in-progress")
+            {
+                filteredTodosByCommand = todos.Where(todo => todo.Status == "in progress").ToList();
+            }
+            else 
+            {
+                Console.WriteLine("Wrong command. Please use 'help' for more information.");
+                return;
+            }
+
+
+            if (filteredTodosByCommand.Any())
+            {
+                Console.WriteLine(" ID\t\t\t\t\t\tDescription\t\t\tStatus\t\tCreated\t\t\t\tLast Updated");
+                Console.WriteLine("----\t\t\t\t\t\t----\t\t\t\t----\t\t----\t\t\t\t----\t\t");
+
+                foreach (Todo todo in filteredTodosByCommand)
+                {
+                    Console.WriteLine(todo.ToString());
+                }
+            }
+            else 
+            {
+                Console.WriteLine("There are no tasks marked with that status.");
+            }
+        }
+
         public void AddTodo(Todo todo)
         {
             todos.Add(todo);
@@ -239,11 +276,11 @@ namespace TaskTracker.Service
                             bool isId = TaskTrackerExtensions.TryParseGuid(inputArgs[1], out Guid id);
                             if (isId && inputArgs[0] == "mark-in-progress")
                             {
-                                ChangeStatus(id, "In Progress");
+                                ChangeStatus(id, "in progress");
                             }
                             else if (isId && inputArgs[0] == "mark-done")
                             {
-                                ChangeStatus(id, "Done");
+                                ChangeStatus(id, "done");
                             }
                             else
                             {
@@ -252,7 +289,27 @@ namespace TaskTracker.Service
                         }
                         break;
                     case "list": // List all tasks
-                        DisplayTodos();
+                        if (inputArgs.Length == 1)
+                        {
+                            DisplayTodos();
+                        }
+                        else if (inputArgs.Length > 2)
+                        {
+                            Console.WriteLine("Too many arguments given. You can use 'help' for more information.");
+                        }
+                        else 
+                        {
+                            if (inputArgs[1] == "todo" 
+                                || inputArgs[1] == "in-progress"
+                                || inputArgs[1] == "done")
+                            {
+                                DisplayTodos(inputArgs[1]);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Wrong argument given. You can use 'help' for more information.");
+                            }
+                        }
                         break;
                     case "help":
                         Console.WriteLine("Here are all the available commands:");
@@ -263,6 +320,9 @@ namespace TaskTracker.Service
                         DisplayCommand("mark-in-progress", "[id]", "Updates status of specified id to 'In progress'.");
                         DisplayCommand("mark-done", "[id]", "Updates status of specified id to 'Done'.");
                         DisplayCommand("list", "", "Displays all of the current tasks");
+                        DisplayCommand("list", "todo", "Displays all of the current tasks with 'todo' status.");
+                        DisplayCommand("list", "in-progress", "Displays all of the current tasks with 'in progress' status.");
+                        DisplayCommand("list", "done", "Displays all of the current tasks with 'done' status.");
                         DisplayCommand("help", "", "Shows available commands.");
                         DisplayCommand("exit", "", "Exits the CLI application.");
 
