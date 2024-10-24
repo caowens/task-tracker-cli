@@ -18,6 +18,9 @@ namespace TaskTracker.Service
             LoadTodosFromFile();
         }
 
+        /// <summary>
+        /// If file exists from <see cref="TaskService.filePath"/> instance, then updates <see cref="TaskService.todos"/> to contain the corresponding <see cref="Todo"/>s.
+        /// </summary>
         private void LoadTodosFromFile()
         {
             if (File.Exists(filePath))
@@ -30,7 +33,12 @@ namespace TaskTracker.Service
             }
         }
 
-        // Helper method to standardize command output
+        /// <summary>
+        /// Helper method to standardize command output.
+        /// </summary>
+        /// <param name="command">The actionable command the user can use.</param>
+        /// <param name="args">The arguments that should be used with the command.</param>
+        /// <param name="description">Describes the use of the command.</param>
         public static void DisplayCommand(string command, string args, string description)
         {
             // Set a fixed width for command and arguments combined to ensure descriptions align.
@@ -41,6 +49,9 @@ namespace TaskTracker.Service
             Console.WriteLine($"\t{(command.Pastel(Color.DarkViolet).PadRight(argWidth) + " " + args.Pastel(Color.Green)).PadRight(totalWidth)} {description}");
         }
 
+        /// <summary>
+        /// Displays all of the user's tasks.
+        /// </summary>
         public void DisplayTodos()
         {
             Console.WriteLine(" ID\t\t\t\t\t\tDescription\t\t\tStatus\t\tCreated\t\t\t\tLast Updated");
@@ -52,6 +63,10 @@ namespace TaskTracker.Service
             }
         }
 
+        /// <summary>
+        /// Displays all of the user's tasks that match the given status.
+        /// </summary>
+        /// <param name="command">Status-specific command used to find which status to filter by.</param>
         public void DisplayTodos(string command)
         {
             List<Todo> filteredTodosByCommand = new List<Todo>();
@@ -89,6 +104,10 @@ namespace TaskTracker.Service
             }
         }
 
+        /// <summary>
+        /// Adds a task to the <see cref="TaskService.todos"/> and to the json file specified at the <see cref="TaskService.filePath"/> path.
+        /// </summary>
+        /// <param name="todo"></param>
         public void AddTodo(Todo todo)
         {
             todos.Add(todo);
@@ -100,6 +119,11 @@ namespace TaskTracker.Service
             Console.WriteLine("Task added successfully.");
         }
 
+        /// <summary>
+        /// Updates specified task with a new description.
+        /// </summary>
+        /// <param name="id"><see cref="Guid"/> for the task the user wants to update.</param>
+        /// <param name="description">New description the user wants to change for the specified task.</param>
         public void UpdateTodo(Guid id, string description)
         {
             if (todos.Exists(x => x.Id == id)) 
@@ -123,6 +147,10 @@ namespace TaskTracker.Service
             }
         }
 
+        /// <summary>
+        /// Deletes a task from both the <see cref="TaskService.todos"/> and the json file specified at <see cref="TaskService.filePath"/>.
+        /// </summary>
+        /// <param name="id"><see cref="Guid"/> for the specific task the user wants to delete.</param>
         public void DeleteTodo(Guid id)
         {
             if (todos.Exists(x => x.Id == id)) 
@@ -141,6 +169,11 @@ namespace TaskTracker.Service
             }
         }
 
+        /// <summary>
+        /// Updates specified task's status to be whatever is the corresponding command.
+        /// </summary>
+        /// <param name="id"><see cref="Guid"/> for the specific task the user wants to update.</param>
+        /// <param name="status">New status the user wants to add for the specified task.</param>
         public void ChangeStatus(Guid id, string status)
         {
             if (todos.Exists(x => x.Id == id)) 
@@ -164,6 +197,9 @@ namespace TaskTracker.Service
             }
         }
 
+        /// <summary>
+        /// Starts <see cref="TaskService"/> job to start the session for interaction with the CLI.
+        /// </summary>
         public void Start()
         {
             bool running = true;
